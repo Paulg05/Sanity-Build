@@ -34,3 +34,10 @@ export default function Home() {
     </div>
   );
 }
+
+//to make SSR work within next.js we use specual func() called 
+
+export const getServerSideProps = async() => {
+  //query to fetch info from sanity 
+  const query = 
+}
