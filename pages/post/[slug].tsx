@@ -3,17 +3,48 @@ import { GetStaticProps } from "next";
 import Header from "../../components/Header";
 import { sanityClient, urlFor } from "../../sanity";
 import { Post } from "../../typing";
+import PortableText from "react-portable-text";
 
 interface Props {
   post: Post;
 }
 
 function Post({ post }: Props) {
-  console.log(post);
-  
   return (
     <main>
       <Header />
+      <img
+        src={urlFor(post.mainImage).url()!}
+        alt=""
+        className="w-full h-40 object-cover"
+      />
+
+      <article className="max-w-3xl mx-auto p-5">
+        <h1 className="text-3xl mt-10 mb-3">{post.title}</h1>
+        <h2 className="text-xl font-light text-gray-500 mb-2">
+          {post.description}
+        </h2>
+        <div className="flex items-center space-x-2">
+          <img
+            src={urlFor(post.author.image).url()!}
+            alt=""
+            className="h-10 w-10 rounded-full"
+          />
+          <p className="font-extralight text-sm">
+            Blog post by{" "}
+            <span className="text-green-600">{post.author.name}</span> -
+            Published at {new Date(post._createdAt).toLocaleString()}
+          </p>
+        </div>
+        <div className="">
+          <PortableText
+            dataset={process.env.NEXT_PUBLIC_SANITY_DATASET!}
+            projectId={process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!}
+            content={post.body}
+            serializers={}
+          />
+        </div>
+      </article>
     </main>
   );
 }
@@ -75,6 +106,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       post,
     },
     //updates the cache that revalidates the ISR
-    revalidate: 60, //after 60 sec, this updates the old cached version 
+    revalidate: 60, //after 60 sec, this updates the old cached version
   };
 };
